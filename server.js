@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import redisClient from "./config/redis.js";
+import pool from "./config/db.js";
 
 import categoryRoutes from "./routes/category.routes.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -17,6 +18,16 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
+
+app.get("/health/db", async (req, res) => {
+  try {
+    await pool.query("SELECT NOW()")
+    res.json("Tested OK");
+  }catch (err){
+    console.error("Error : ", err);
+    res.status(500);
+  }
+})
 
 app.get("/api/protected", requireAuth, (req, res) => {
   res.send({
