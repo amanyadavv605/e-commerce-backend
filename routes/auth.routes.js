@@ -1,10 +1,10 @@
 import express from "express";
 import pool from "../config/db.js";
 import redis from "../config/redis.js";
-import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import twilioClient from "../config/twilio.js";
 import transporter from "../config/nodemailer.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -14,15 +14,30 @@ const generateOTP = () => {
 
 router.post("/request-otp", async (req, res) => {
   const { email, phone } = req.body;
-
+  
   if (!email && !phone) {
     return res
-      .status(400)
-      .json({ message: "Please enter valid email or phone number." });
+    .status(400)
+    .json({ message: "Please enter valid email or phone number." });
   }
-
+  
   const identifier = email || phone;
   const key = email ? `otp:email:${email}` : `otp:phone:${phone}`;
+  const limitKey = email
+  ? `otp_limit:email:${email}`
+  : `otp_limit:phone:${phone}`;
+  const attempts = await redis.get(limitKey);
+
+  if(attempts && Number(attempts) >= 5){
+    return res.status(429).json({
+      message: "Too many OTP requests. Try again later."
+    });
+  }
+
+  await redis.multi()
+    .incr(limitKey)
+    .expire(limitKey, 600)
+    .exec();
 
   const otp = generateOTP();
 
@@ -119,5 +134,15 @@ router.post("/verify-otp", async (req, res) => {
     user,
   });
 });
+
+
+router.get("/user", requireAuth, async (req, res) => {
+  const { userId } = req.user;
+
+  const result = await pool.query("SELECT * from users WHERE id = $1", [userId]);
+  
+  res.json(result.rows[0]);
+})
+
 
 export default router;
