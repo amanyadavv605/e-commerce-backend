@@ -1,12 +1,12 @@
 FROM node:24
 
-WORKDIR /Desktop/E-Commerce/backend
+WORKDIR /e-commerce-backend
 
 COPY package*.json ./
 RUN npm install
 
 COPY . .
 
-EXPOSE 4000
+EXPOSE 5000
 
 CMD ["npm", "run", "dev"]
