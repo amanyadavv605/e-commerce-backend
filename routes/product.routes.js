@@ -1,4 +1,4 @@
-import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
+import { requireAuth, requireAdmin } from "../middleware/auth.middleware.js";
 import pool from "../config/db";
 import express from "express";
 
