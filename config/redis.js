@@ -1,8 +1,8 @@
-import Redis from 'ioredis';
+import { createClient } from 'redis';
 
-const redis = new Redis({
-    host: "redis.railway.internal",
-    port: 6379,
+
+const redis = createClient({
+    url: REDIS_URL
 })
 
 redis.on("connect", () => {
