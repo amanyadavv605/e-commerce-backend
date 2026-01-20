@@ -1,6 +1,6 @@
 FROM node:24
 
-WORKDIR /home/aman/Desktop/E-Commerce/backend
+WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
