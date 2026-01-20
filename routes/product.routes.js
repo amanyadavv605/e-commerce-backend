@@ -19,4 +19,10 @@ router.post("/", requireAuth, requireAdmin, async (req, res) => {
   return res.status(201).json({ message: result.rows[0] })
 });
 
+router.get("/", async (req, res) => {
+  const result = pool.query("");
+
+  return res.json({ message: result.rows })
+})
+
 export default router;
