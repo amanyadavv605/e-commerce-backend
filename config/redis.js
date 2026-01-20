@@ -1,17 +1,16 @@
-import { createClient } from "ioredis";
+import Redis from 'ioredis';
 
-const redis = createClient({
-  url: process.env.REDIS_URL
-});
+const redis = new Redis({
+    host: "redis.railway.internal",
+    port: 6379,
+})
 
 redis.on("connect", () => {
-  console.log("Redis connected");
+    console.log("Redis connected...");
 });
 
 redis.on("error", (err) => {
-  console.error("Redis error:", err);
+    console.log("Redis connection error: ", err);
 });
-
-await redis.connect();
 
 export default redis;
