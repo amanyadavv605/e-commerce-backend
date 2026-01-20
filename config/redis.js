@@ -2,7 +2,7 @@ import { createClient } from 'redis';
 
 
 const redis = createClient({
-    url: REDIS_URL
+    url: process.env.REDIS_URL
 })
 
 redis.on("connect", () => {
