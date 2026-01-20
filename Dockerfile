@@ -1,6 +1,6 @@
 FROM node:24
 
-WORKDIR /backend
+WORKDIR /e-commerce-backend
 
 COPY package*.json ./
 RUN npm ci --only=production
